@@ -13,7 +13,7 @@ app.use(express.json());
 const liveCases = require('./routes/liveCases');
 const India = require('./routes/India');
 app.use('/India', India);
-app.use('/liveCases', liveCases);   
+app.use('/liveCases', liveCases);  
 app.listen(port, () => {
     console.log("Server has started at port - " + port);
 })

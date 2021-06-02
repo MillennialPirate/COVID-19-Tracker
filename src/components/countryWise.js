@@ -2,6 +2,7 @@ import React from 'react';
 import './styles.css';
 import axios from 'axios';
 import Dashboard from './dashboard';
+import {Link} from 'react-router-dom';    
 class CountryWise extends React.Component{
     constructor(props)
     {
@@ -19,6 +20,15 @@ class CountryWise extends React.Component{
     {
         this.setState({country: e.target.value});
         console.log(this.state.country)
+    }
+    componentDidMount()
+    {
+        axios.get('http://localhost:5000/liveCases/global')
+        .then(res => {
+            this.setState({confirmed: res.data.confirmedCases});
+            this.setState({recovered: res.data.recovered});
+            this.setState({deaths: res.data.deaths});
+        })
     }
     submit(e)
     {
@@ -60,7 +70,7 @@ class CountryWise extends React.Component{
                         
                     </div>
                     <div style={{paddingTop:"1%"}}></div>
-                    <button type="submit" class = "go" onClick = {this.submit}>Go!</button>{" "}<button class = "go">India Stats</button>
+                    <button type="submit" class = "go" onClick = {this.submit}>Go!</button>{" "}<Link to = '/India'><button class = "go">India Stats</button></Link>
                 </div>
                 <div style={{paddingTop:"2%"}}></div>
                 <div class = "container">
