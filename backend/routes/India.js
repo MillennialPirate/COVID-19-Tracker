@@ -1,6 +1,51 @@
 const router = require('express').Router();
 const bodyParser = require('body-parser');
 const https = require('https');
+router.route('/time').post((req, res) => {
+    const state = req.body.state;
+    const url = "https://api.covid19india.org/v4/min/timeseries.min.json";
+    var dataSend = [];
+    try{
+        https.get(url, function(response){
+            if(response.statusCode != 200)
+            {
+                res.json("Error");
+                return;
+            }
+            var data = '';
+            response.on('data', function(chunk){
+                data += chunk;
+            })
+            response.on('end', function(){
+                const obj = JSON.parse(data);
+                // res.json(obj[state].dates);
+                const dates = obj[state].dates;
+                const arr = []; 
+                for(key in dates)
+                {
+                    var val = dates[key];
+                    var data1 = {
+                        date : key, 
+                        confirmed : val.total.confirmed
+                    };
+                    arr.push(data1);
+                }
+                arr.reverse();
+                for(var i = 0; i < 14; i++)
+                {
+                    dataSend.push(arr[i]);
+                }
+                dataSend.reverse();
+                res.json(dataSend);
+            })
+        })
+    }
+    catch(err)
+    {
+        res.json('Error');
+        return;
+    }
+})
 router.route('/').get((req, res) => {
     const country = req.body.country;
     const url = "https://api.covid19india.org/v4/min/data.min.json";

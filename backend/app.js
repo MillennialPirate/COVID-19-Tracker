@@ -12,8 +12,12 @@ app.use(express.json());
 //create api routes 
 const liveCases = require('./routes/liveCases');
 const India = require('./routes/India');
+const vaccines = require('./routes/vaccines');
+const time = require('./routes/TimeSeries');
 app.use('/India', India);
-app.use('/liveCases', liveCases);  
+app.use('/liveCases', liveCases); 
+app.use('/vaccines', vaccines); 
+app.use('/time', time);
 app.listen(port, () => {
     console.log("Server has started at port - " + port);
 })
