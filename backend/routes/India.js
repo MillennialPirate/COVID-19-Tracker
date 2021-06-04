@@ -226,10 +226,6 @@ router.route('/').get((req, res) => {
                         {
                             key1 = "Other Territory"
                         }
-                        if(key === "UT")
-                        {
-                            key1 = "Union Territory"
-                        }
                         if(key === "CT")
                         {
                             key1 = "Chattisgarh"

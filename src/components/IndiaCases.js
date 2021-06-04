@@ -6,6 +6,7 @@ import Dash from './dashboard2';
 import Pic from './images/img1.svg';
 import {Link} from 'react-router-dom';
 import Time from './LineChart';
+import State from './stateAnalytics';
 class India extends React.Component 
 {
     constructor(props)
@@ -22,7 +23,8 @@ class India extends React.Component
             vaccinated: 0,
             cases : [],
             dates : [],
-            total : []
+            total : [],
+            state: "",
         }
         this.checkStatus = this.checkStatus.bind(this);
         this.view = this.view.bind(this);
@@ -34,23 +36,29 @@ class India extends React.Component
         const data = {
             state : loc.stateCode
         }
+        console.log(data);
         axios.post('http://localhost:5000/India/time', data)
         .then(res => {
+            this.state.cases.length = 0;
+            this.state.dates.length = 0;
+            this.state.total.length = 0;
             this.setState({total : res.data}, () => {
+                this.setState({state: loc.state});
                 this.setState({confirmed: loc.confirmed});
                 this.setState({recovered: loc.recovered});
                 this.setState({deaths: loc.deaths}); 
                 this.setState({tested: loc.tested});
                 this.setState({vaccinated : loc.vaccinated});
-                
                 this.state.total.map((data) => {
                     this.state.cases.push(data.confirmed);
                     this.state.dates.push(data.date);
+                    this.setState({status: "state"});
                 })
-
-                this.setState({status: "time loaded"});
             })
+
         })
+        
+        
     }
     checkStatus()
     {
@@ -74,20 +82,8 @@ class India extends React.Component
                     <div style={{paddingTop:"2%"}}></div>  
                     <div class = "container">
                         <div class = "row">
-                            <div class = "col-lg-6 col-md-12" style={{textAlign:"center"}}>
-                                <div >
-                                    <img src = {Pic} style={{width:"400px", height: "500px"}}/>
-                                    <div style={{paddingTop:"3%"}}></div>
-                                    <h1>Click the respective state to view the analytics!</h1>
-                                    <Dashboard confirmed = {this.state.confirmed} deaths ={this.state.deaths} recovered = {this.state.recovered}/>
-                                    <div style = {{paddingTop:"3%"}}></div>
-                                    <Dash confirmed = {this.state.confirmed} vaccinated = {this.state.vaccinated} tested = {this.state.tested}/>
-                                    <div style={{paddingTop:"2%"}}></div>
-                                    <div style={{paddingTop:"2%"}}></div>
-                                    <Link to = '/vaccine'><button class = "go">Vaccine slots</button></Link>
-                                </div>
-                            </div>
-                            <div class = "col-lg-6 col-md-12">
+                            
+                            <div class = "col-lg-12 col-md-12">
                                 <div class = "container" style={{textAlign:"center"}}>
                                     <table class="table table-striped">
                                         <thead>
@@ -102,8 +98,8 @@ class India extends React.Component
                                         <tbody>
                                             {
                                                 this.state.states.map(loc => {
-                                                    return <tr onClick = {(e) => {this.view(e, loc)}}>
-                                                    <th scope="row">{loc.state}</th>
+                                                    return <tr >
+                                                    <th scope="row"><a href = "" onClick = {(e) => {this.view(e, loc)}}>{loc.state}</a></th>
                                                     <td>{loc.recovered}</td>
                                                     <td>{loc.confirmed}</td>
                                                     <td>{loc.deaths}</td>
@@ -113,6 +109,10 @@ class India extends React.Component
                                             }
                                         </tbody>
                                     </table>
+                                </div>
+                                
+                                <div style = {{textAlign:"center"}}>
+                                <Link to = '/vaccine' ><button class = "go">Vaccine slots</button></Link>
                                 </div>
                             </div>
                         </div>
@@ -121,66 +121,9 @@ class India extends React.Component
             </div>
             )
         }
-        if(this.state.status === "time loaded")
+        if(this.state.status === "state")
         {
-            return (
-                
-                <div>
-                <div class = "container">
-                    <div style={{paddingTop:"2%"}}></div>
-                    <div style={{textAlign:"center"}}>
-                        <h1>COVID-19 Tracker</h1>
-                    </div>
-                    <div style={{paddingTop:"2%"}}></div>  
-                    <div class = "container">
-                        <div class = "row">
-                            <div class = "col-lg-6 col-md-12" style={{textAlign:"center"}}>
-                                <div >
-                                    <img src = {Pic} style={{width:"400px", height: "500px"}}/>
-                                    <div style={{paddingTop:"3%"}}></div>
-                                    <h1>Click the respective state to view the analytics!</h1>
-                                    <Dashboard confirmed = {this.state.confirmed} deaths ={this.state.deaths} recovered = {this.state.recovered}/>
-                                    <div style = {{paddingTop:"3%"}}></div>
-                                    <Dash confirmed = {this.state.confirmed} vaccinated = {this.state.vaccinated} tested = {this.state.tested}/>
-                                    <div style={{paddingTop:"2%"}}></div>
-                                    <Time dates = {this.state.dates} cases = {this.state.cases}/>
-                                    <div style={{paddingTop:"2%"}}></div>
-                                    <Link to = '/vaccine'><button class = "go">Vaccine slots</button></Link>
-                                </div>
-                            </div>
-                            <div class = "col-lg-6 col-md-12">
-                                <div class = "container" style={{textAlign:"center"}}>
-                                    <table class="table table-striped">
-                                        <thead>
-                                            <tr>
-                                            <th scope="col">State</th>
-                                            <th scope="col">Recovered</th>
-                                            <th scope="col">Confirmed</th>
-                                            <th scope="col">Deaths</th>
-                                            <th scope = "col">Vaccinated</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {
-                                                this.state.states.map(loc => {
-                                                    return <tr onClick = {(e) => {this.view(e, loc)}}>
-                                                    <th scope="row">{loc.state}</th>
-                                                    <td>{loc.recovered}</td>
-                                                    <td>{loc.confirmed}</td>
-                                                    <td>{loc.deaths}</td>
-                                                    <td>{loc.vaccinated}</td>
-                                                    </tr>
-                                                })
-                                            }
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            )
+            return <State cases = {this.state.cases} dates = {this.state.dates} confirmed = {this.state.confirmed} recovered = {this.state.recovered} deaths = {this.state.deaths} tested = {this.state.tested} state = {this.state.state}/>
         }
     }
     componentWillMount()
